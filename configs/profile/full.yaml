@@ -1,3 +1,4 @@
+﻿# @package _global_
 profile:
   name: full
 
@@ -20,3 +21,4 @@ runtime:
 tracking:
   tracker: csv
   wandb_enabled: false
+

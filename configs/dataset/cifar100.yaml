@@ -1,6 +1,5 @@
-dataset:
-  name: cifar100
-  num_classes: 100
-  image_size: 224
-  allow_download: true
-  download_root: ${paths.writable_data_root}
+name: cifar100
+num_classes: 100
+image_size: 224
+allow_download: true
+download_root: ${paths.writable_data_root}

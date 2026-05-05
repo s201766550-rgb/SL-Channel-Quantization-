@@ -1,3 +1,4 @@
+﻿# @package _global_
 profile:
   name: kaggle_smoke
 
@@ -39,3 +40,4 @@ paths:
 tracking:
   tracker: csv
   wandb_enabled: false
+

@@ -1,11 +1,10 @@
-dataset:
-  name: ham10000
-  num_classes: 7
-  image_size: 224
-  allow_download: false
-  download_root: ${paths.writable_data_root}
-  train_ratio: 0.8
-  test_ratio: 0.2
-  ham10000:
-    image_dir: /kaggle/input/ham10000/HAM10000_images
-    metadata_csv: /kaggle/input/ham10000/HAM10000_metadata.csv
+name: ham10000
+num_classes: 7
+image_size: 224
+allow_download: false
+download_root: ${paths.writable_data_root}
+train_ratio: 0.8
+test_ratio: 0.2
+ham10000:
+  image_dir: /kaggle/input/ham10000/HAM10000_images
+  metadata_csv: /kaggle/input/ham10000/HAM10000_metadata.csv

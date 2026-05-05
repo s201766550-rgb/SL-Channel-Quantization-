@@ -1,3 +1,2 @@
-method:
-  name: random_channel
-  compression: cgc
+﻿name: random_channel
+compression: cgc

@@ -1,3 +1,2 @@
-method:
-  name: cgc_only
-  compression: cgc
+﻿name: cgc_only
+compression: cgc

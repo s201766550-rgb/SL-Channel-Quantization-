@@ -1,5 +1,4 @@
-method:
-  name: easyquant
-  compression: easyquant
-  quantization_bits: 8
-  easyquant_calibration_batches: 32
+﻿name: easyquant
+compression: easyquant
+quantization_bits: 8
+easyquant_calibration_batches: 32

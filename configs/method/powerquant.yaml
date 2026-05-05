@@ -1,5 +1,4 @@
-method:
-  name: powerquant
-  compression: powerquant
-  quantization_bits: 8
-  powerquant_exponent: 2.0
+﻿name: powerquant
+compression: powerquant
+quantization_bits: 8
+powerquant_exponent: 2.0

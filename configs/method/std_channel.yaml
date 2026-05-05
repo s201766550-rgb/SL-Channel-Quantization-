@@ -1,3 +1,2 @@
-method:
-  name: std_channel
-  compression: cgc
+﻿name: std_channel
+compression: cgc
