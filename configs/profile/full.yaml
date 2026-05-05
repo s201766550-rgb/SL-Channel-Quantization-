@@ -1,0 +1,22 @@
+profile:
+  name: full
+
+training:
+  rounds: 200
+  batch_size: 128
+  eval_interval: 1
+
+client:
+  num_clients: 5
+  client_parallel: true
+
+server:
+  server_batching_mode: parallel_concat
+
+runtime:
+  use_torch_distributed: false
+  deterministic: true
+
+tracking:
+  tracker: csv
+  wandb_enabled: false

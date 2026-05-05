@@ -1,0 +1,8 @@
+hydra-core
+omegaconf
+scikit-learn
+pandas
+matplotlib
+tqdm
+wandb
+kagglehub

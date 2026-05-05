@@ -1,0 +1,83 @@
+defaults:
+  - profile: full
+  - dataset: ham10000
+  - distribution: iid
+  - method: sl_acc
+  - runtime: default
+  - _self_
+
+project:
+  name: sl_acc_reproduction
+
+seed: 0
+
+paths:
+  project_root: .
+  data_root: ./data
+  writable_data_root: ./data
+  save_dir: ./outputs
+  checkpoint_dir: ./outputs/checkpoints
+  cache_dir: ./cache
+  temp_dir: ./tmp
+
+training:
+  rounds: 200
+  batch_size: 128
+  eval_interval: 1
+  log_interval: 10
+  save_model: true
+  checkpoint_interval_rounds: 5
+  save_latest_checkpoint: true
+  save_best_checkpoint: true
+  resume: false
+  resume_path: null
+
+optimizer:
+  name: sgd
+  lr: 1e-4
+  momentum: 0.9
+  weight_decay: 5e-4
+
+model:
+  name: resnet18
+  pretrained: false
+  split_location: after_relu_first3_modules
+
+client:
+  num_clients: 5
+  client_parallel: true
+
+server:
+  server_batching_mode: parallel_concat
+
+acii:
+  importance_metric: entropy
+  entropy_type: adaptive
+  alpha_mode: dynamic
+  alpha_fixed: 0.5
+  history_window: 5
+  eps: 1e-8
+  log_eps: 1e-12
+
+compression:
+  name: cgc
+  grouping_method: kmeans_1d
+  num_groups: 4
+  quantization: linear
+  bit_min: 2
+  bit_max: 8
+  kmeans_n_init: 10
+  kmeans_max_iter: 300
+
+tracking:
+  tracker: csv
+  wandb_enabled: false
+  wandb_project: sl-acc
+  wandb_entity: null
+
+profiling:
+  log_client_compute: true
+  log_client_memory: true
+  profile_client_only: false
+  measure_compression_overhead: true
+  measure_communication_volume: true

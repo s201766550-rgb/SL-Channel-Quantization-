@@ -1,0 +1,41 @@
+profile:
+  name: kaggle_smoke
+
+dataset:
+  name: mnist
+
+training:
+  rounds: 2
+  batch_size: 32
+
+client:
+  num_clients: 2
+  client_parallel: true
+
+server:
+  server_batching_mode: parallel_concat
+
+runtime:
+  device: cuda_if_available
+  num_workers: 2
+  deterministic: true
+  use_torch_distributed: false
+
+compression:
+  num_groups: 2
+
+acii:
+  history_window: 2
+
+paths:
+  project_root: /kaggle/working/sl_acc_reproduction
+  data_root: /kaggle/input
+  writable_data_root: /kaggle/working/data
+  save_dir: /kaggle/working/outputs/sl_acc_smoke
+  checkpoint_dir: /kaggle/working/outputs/checkpoints
+  cache_dir: /kaggle/working/cache
+  temp_dir: /kaggle/temp
+
+tracking:
+  tracker: csv
+  wandb_enabled: false

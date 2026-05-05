@@ -1,0 +1,6 @@
+dataset:
+  name: mnist
+  num_classes: 10
+  image_size: 224
+  allow_download: true
+  download_root: ${paths.writable_data_root}

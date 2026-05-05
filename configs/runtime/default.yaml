@@ -1,0 +1,10 @@
+runtime:
+  device: cuda_if_available
+  num_workers: 2
+  pin_memory: true
+  persistent_workers: false
+  mixed_precision: false
+  compile_model: false
+  deterministic: true
+  use_torch_distributed: false
+  gradient_accumulation_steps: 1

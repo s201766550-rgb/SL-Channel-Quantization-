@@ -1,0 +1,5 @@
+method:
+  name: randtopk_sl
+  compression: randtopk
+  topk_ratio: 0.1
+  random_extra_ratio: 0.01

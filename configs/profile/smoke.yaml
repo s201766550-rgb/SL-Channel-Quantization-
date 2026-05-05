@@ -1,0 +1,23 @@
+profile:
+  name: smoke
+
+dataset:
+  name: mnist
+
+training:
+  rounds: 2
+  batch_size: 32
+  eval_interval: 1
+
+client:
+  num_clients: 2
+  client_parallel: false
+
+server:
+  server_batching_mode: sequential
+
+compression:
+  num_groups: 2
+
+acii:
+  history_window: 2

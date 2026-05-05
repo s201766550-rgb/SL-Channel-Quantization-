@@ -1,0 +1,5 @@
+distribution:
+  name: noniid
+  iid: false
+  dirichlet_beta: 0.5
+  max_resample_attempts: 100

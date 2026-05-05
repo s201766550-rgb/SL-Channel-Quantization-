@@ -1,0 +1,4 @@
+distribution:
+  name: iid
+  iid: true
+  dirichlet_beta: 0.5

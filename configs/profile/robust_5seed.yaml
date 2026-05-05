@@ -1,0 +1,15 @@
+profile:
+  name: robust_5seed
+
+seeds:
+  values: [0, 1, 2, 3, 4]
+
+training:
+  rounds: 200
+  batch_size: 128
+
+client:
+  num_clients: 5
+
+server:
+  server_batching_mode: parallel_concat

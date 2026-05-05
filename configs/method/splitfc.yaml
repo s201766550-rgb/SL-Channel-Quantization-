@@ -1,0 +1,4 @@
+method:
+  name: splitfc
+  compression: splitfc
+  std_keep_ratio: 0.5

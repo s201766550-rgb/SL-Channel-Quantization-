@@ -1,0 +1,34 @@
+profile:
+  name: kaggle_matrix_shard
+
+dataset:
+  name: mnist
+
+distribution:
+  name: iid
+
+method:
+  name: sl_acc
+
+client:
+  num_clients: 5
+  client_parallel: true
+
+runtime:
+  device: cuda_if_available
+  num_workers: 2
+  deterministic: true
+  use_torch_distributed: false
+
+paths:
+  project_root: /kaggle/working/sl_acc_reproduction
+  data_root: /kaggle/input
+  writable_data_root: /kaggle/working/data
+  save_dir: /kaggle/working/outputs/sl_acc_shards
+  checkpoint_dir: /kaggle/working/outputs/checkpoints
+  cache_dir: /kaggle/working/cache
+  temp_dir: /kaggle/temp
+
+tracking:
+  tracker: csv
+  wandb_enabled: false
