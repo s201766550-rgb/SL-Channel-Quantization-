@@ -1,7 +1,7 @@
 import csv
 import json
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List
 
 
 class MetricLogger:
@@ -10,20 +10,27 @@ class MetricLogger:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.csv_path = self.output_dir / "metrics.csv"
         self.jsonl_path = self.output_dir / "metrics.jsonl"
-        self._csv_writer: Optional[csv.DictWriter] = None
-        self._csv_fp = self.csv_path.open("w", newline="", encoding="utf-8")
+        self._rows: List[Dict] = []
+        self._fieldnames: List[str] = []
+
+    def _rewrite_csv(self) -> None:
+        with self.csv_path.open("w", newline="", encoding="utf-8") as fp:
+            writer = csv.DictWriter(fp, fieldnames=self._fieldnames)
+            writer.writeheader()
+            for row in self._rows:
+                writer.writerow({k: row.get(k, "") for k in self._fieldnames})
 
     def log(self, row: Dict) -> None:
-        if self._csv_writer is None:
-            self._csv_writer = csv.DictWriter(self._csv_fp, fieldnames=list(row.keys()))
-            self._csv_writer.writeheader()
-        self._csv_writer.writerow(row)
-        self._csv_fp.flush()
+        for key in row.keys():
+            if key not in self._fieldnames:
+                self._fieldnames.append(key)
+        self._rows.append(dict(row))
+        self._rewrite_csv()
         with self.jsonl_path.open("a", encoding="utf-8") as fp:
             fp.write(json.dumps(row) + "\n")
 
     def close(self) -> None:
-        self._csv_fp.close()
+        return None
 
 
 def write_json(path: str, payload: Dict) -> None:
