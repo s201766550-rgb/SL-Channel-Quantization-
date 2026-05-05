@@ -4,4 +4,4 @@ __pycache__/
 outputs/
 cache/
 tmp/
-data/
+/data/
