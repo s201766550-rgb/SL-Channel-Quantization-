@@ -1,0 +1,10 @@
+name: ham10000
+num_classes: 7
+image_size: 224
+allow_download: false
+download_root: ${paths.writable_data_root}
+train_ratio: 0.8
+test_ratio: 0.2
+ham10000:
+  image_dir: /kaggle/input/datasets/surajghuwalewala/ham1000-segmentation-and-classification/images
+  metadata_csv: /kaggle/input/datasets/surajghuwalewala/ham1000-segmentation-and-classification/GroundTruth.csv

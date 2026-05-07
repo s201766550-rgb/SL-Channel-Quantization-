@@ -1,0 +1,31 @@
+# @package _global_
+profile:
+  name: kaggle_single_full_suraj
+
+dataset:
+  name: ham10000_suraj
+
+runtime:
+  device: cuda_if_available
+  num_workers: 2
+  deterministic: true
+  use_torch_distributed: false
+
+client:
+  client_parallel: true
+
+server:
+  server_batching_mode: parallel_concat
+
+paths:
+  project_root: /kaggle/working/sl_acc_reproduction
+  data_root: /kaggle/input
+  writable_data_root: /kaggle/working/data
+  save_dir: /kaggle/working/outputs/sl_acc_runs
+  checkpoint_dir: /kaggle/working/outputs/checkpoints
+  cache_dir: /kaggle/working/cache
+  temp_dir: /kaggle/temp
+
+tracking:
+  tracker: csv
+  wandb_enabled: false

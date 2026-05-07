@@ -11,6 +11,15 @@ from torchvision import datasets, transforms
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
+HAM_LABEL_MAP = {
+    "akiec": 0,
+    "bcc": 1,
+    "bkl": 2,
+    "df": 3,
+    "mel": 4,
+    "nv": 5,
+    "vasc": 6,
+}
 
 
 class HAM10000Dataset(Dataset):
@@ -18,15 +27,7 @@ class HAM10000Dataset(Dataset):
         self.frame = frame.reset_index(drop=True)
         self.image_dir = Path(image_dir)
         self.tfm = tfm
-        self.label_map = {
-            "akiec": 0,
-            "bcc": 1,
-            "bkl": 2,
-            "df": 3,
-            "mel": 4,
-            "nv": 5,
-            "vasc": 6,
-        }
+        self.label_map = HAM_LABEL_MAP
 
     def __len__(self) -> int:
         return len(self.frame)
@@ -58,6 +59,57 @@ def _mnist_transform(image_size: int) -> transforms.Compose:
             transforms.ToTensor(),
             transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
         ]
+    )
+
+
+def _normalize_ham_metadata(frame: pd.DataFrame) -> pd.DataFrame:
+    # Supported formats:
+    # 1) Canonical HAM metadata: columns include image_id and dx
+    # 2) One-hot labels (e.g., GroundTruth.csv): image + class columns
+    col_lookup = {str(c).strip().lower(): c for c in frame.columns}
+
+    image_id_col = col_lookup.get("image_id")
+    dx_col = col_lookup.get("dx")
+    if image_id_col is not None and dx_col is not None:
+        out = frame[[image_id_col, dx_col]].copy()
+        out.columns = ["image_id", "dx"]
+        out["image_id"] = (
+            out["image_id"]
+            .astype(str)
+            .str.strip()
+            .str.replace(r"\.(jpg|jpeg|png)$", "", case=False, regex=True)
+        )
+        out["dx"] = out["dx"].astype(str).str.strip().str.lower()
+        return out
+
+    image_col = col_lookup.get("image")
+    onehot_cols = {k: v for k, v in col_lookup.items() if k in HAM_LABEL_MAP}
+    if image_col is not None and onehot_cols:
+        class_keys = list(onehot_cols.keys())
+        class_values = (
+            frame[[onehot_cols[k] for k in class_keys]]
+            .apply(pd.to_numeric, errors="coerce")
+            .fillna(0.0)
+            .to_numpy()
+        )
+        winner_idx = class_values.argmax(axis=1)
+        out = pd.DataFrame(
+            {
+                "image_id": (
+                    frame[image_col]
+                    .astype(str)
+                    .str.strip()
+                    .str.replace(r"\.(jpg|jpeg|png)$", "", case=False, regex=True)
+                ),
+                "dx": [class_keys[i] for i in winner_idx],
+            }
+        )
+        return out
+
+    raise ValueError(
+        "Unsupported HAM metadata format. Expected either (image_id, dx) columns or "
+        "(image + one-hot class columns like MEL/NV/BCC/AKIEC/BKL/DF/VASC). "
+        f"Found columns: {list(frame.columns)}"
     )
 
 
@@ -99,7 +151,7 @@ def load_dataset(cfg) -> Tuple[Dataset, Dataset, Dict[str, bool]]:
                 "HAM10000 paths are missing. Set dataset.ham10000.image_dir and "
                 "dataset.ham10000.metadata_csv to valid Kaggle input paths."
             )
-        frame = pd.read_csv(metadata_csv)
+        frame = _normalize_ham_metadata(pd.read_csv(metadata_csv))
         train_frame, test_frame = train_test_split(
             frame,
             test_size=float(cfg.dataset.test_ratio),
