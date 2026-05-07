@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: kaggle_single_full
 
@@ -9,10 +9,8 @@ runtime:
   use_torch_distributed: false
 
 client:
-  client_parallel: true
 
 server:
-  server_batching_mode: parallel_concat
 
 paths:
   project_root: /kaggle/working/sl_acc_reproduction

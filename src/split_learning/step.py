@@ -19,7 +19,7 @@ class StepMetrics:
     loss: float
 
 
-def split_learning_parallel_concat_step(
+def split_learning_accumulate_step(
     client_model: torch.nn.Module,
     server_model: torch.nn.Module,
     client_optimizer: torch.optim.Optimizer,
@@ -33,16 +33,14 @@ def split_learning_parallel_concat_step(
     client_optimizer.zero_grad()
     server_optimizer.zero_grad()
 
-    client_activations: List[torch.Tensor] = []
-    dequant_activations: List[torch.Tensor] = []
-    labels: List[torch.Tensor] = []
-
     act_payload = act_total = act_runtime = 0
+    grad_payload = grad_total = grad_runtime = 0
+    total_loss = 0.0
+
+    num_clients = len(batch_by_client)
 
     for client_id, x, y in batch_by_client:
         a = client_model(x)
-        client_activations.append(a)
-        labels.append(y)
 
         c_act = method_compressor.compress(
             x=a.detach(),
@@ -57,19 +55,16 @@ def split_learning_parallel_concat_step(
         act_runtime += c_act.runtime_tensor_bytes
 
         a_tilde = method_compressor.decompress(c_act, dtype=a.dtype).detach().requires_grad_(True)
-        dequant_activations.append(a_tilde)
+        
+        logits = server_model(a_tilde)
+        
+        # Divide loss by num_clients for gradient accumulation
+        loss = F.cross_entropy(logits, y) / num_clients
+        loss.backward()
+        
+        # Keep original loss scale for reporting
+        total_loss += loss.item() * num_clients
 
-    cat_act = torch.cat(dequant_activations, dim=0)
-    cat_y = torch.cat(labels, dim=0)
-    logits = server_model(cat_act)
-    loss = F.cross_entropy(logits, cat_y)
-    loss.backward()
-    server_optimizer.step()
-
-    grad_payload = grad_total = grad_runtime = 0
-    for (client_id, _, _), a_orig, a_tilde in zip(
-        batch_by_client, client_activations, dequant_activations
-    ):
         grad_a = a_tilde.grad
         c_grad = method_compressor.compress(
             x=grad_a.detach(),
@@ -82,9 +77,11 @@ def split_learning_parallel_concat_step(
         grad_payload += c_grad.logical_payload_bits
         grad_total += c_grad.logical_total_bits
         grad_runtime += c_grad.runtime_tensor_bytes
-        grad_tilde = method_compressor.decompress(c_grad, dtype=a_orig.dtype)
-        a_orig.backward(grad_tilde)
+        
+        grad_tilde = method_compressor.decompress(c_grad, dtype=a.dtype)
+        a.backward(grad_tilde)
 
+    server_optimizer.step()
     client_optimizer.step()
 
     return StepMetrics(
@@ -94,6 +91,6 @@ def split_learning_parallel_concat_step(
         gradient_download_payload_bits=grad_payload,
         gradient_download_total_bits_with_metadata=grad_total,
         gradient_download_runtime_bytes=grad_runtime,
-        active_client_count=len(batch_by_client),
-        loss=float(loss.item()),
+        active_client_count=num_clients,
+        loss=total_loss,
     )

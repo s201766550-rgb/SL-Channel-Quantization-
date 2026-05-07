@@ -1,4 +1,4 @@
-﻿name: sl_acc
+name: sl_acc
 compression: cgc
 topk_ratio: 0.1
 random_extra_ratio: 0.01

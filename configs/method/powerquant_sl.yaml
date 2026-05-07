@@ -1,4 +1,4 @@
-﻿name: powerquant_sl
+name: powerquant_sl
 compression: powerquant
 powerquant_exponent: 2.0
 quantization_bits: 8

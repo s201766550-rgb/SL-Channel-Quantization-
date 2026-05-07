@@ -13,7 +13,7 @@ from src.data.dirichlet_partition import dirichlet_partition
 from src.data.iid_partition import iid_partition
 from src.models.resnet18_split import create_split_resnet18
 from src.split_learning.checkpointing import load_checkpoint, save_checkpoint
-from src.split_learning.step import split_learning_parallel_concat_step
+from src.split_learning.step import split_learning_accumulate_step
 from src.utils.logging_io import MetricLogger, write_json
 from src.utils.runtime_info import write_runtime_info
 from src.utils.seeding import make_torch_generator, make_worker_init_fn
@@ -154,16 +154,7 @@ def train(cfg) -> Dict:
         while active:
             batch_by_client = []
             exhausted = []
-            use_parallel_concat = bool(cfg.client.client_parallel) and str(cfg.server.server_batching_mode) == "parallel_concat"
-            if use_parallel_concat:
-                for cid in list(active):
-                    try:
-                        x, y = next(iters[cid])
-                        batch_by_client.append((cid, x.to(device), y.to(device)))
-                    except StopIteration:
-                        exhausted.append(cid)
-            else:
-                cid = sorted(list(active))[0]
+            for cid in list(active):
                 try:
                     x, y = next(iters[cid])
                     batch_by_client.append((cid, x.to(device), y.to(device)))
@@ -175,7 +166,7 @@ def train(cfg) -> Dict:
                 continue
 
             try:
-                metrics = split_learning_parallel_concat_step(
+                metrics = split_learning_accumulate_step(
                     client_model=client_model,
                     server_model=server_model,
                     client_optimizer=c_opt,

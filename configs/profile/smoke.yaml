@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: smoke
 
@@ -12,10 +12,8 @@ training:
 
 client:
   num_clients: 2
-  client_parallel: false
 
 server:
-  server_batching_mode: sequential
 
 compression:
   num_groups: 2

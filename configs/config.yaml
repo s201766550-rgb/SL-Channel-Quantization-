@@ -45,10 +45,7 @@ model:
 
 client:
   num_clients: 5
-  client_parallel: true
 
-server:
-  server_batching_mode: parallel_concat
 
 acii:
   importance_metric: entropy

@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: full
 
@@ -9,10 +9,8 @@ training:
 
 client:
   num_clients: 5
-  client_parallel: true
 
 server:
-  server_batching_mode: parallel_concat
 
 runtime:
   use_torch_distributed: false

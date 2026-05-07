@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: kaggle_smoke
 
@@ -11,10 +11,7 @@ training:
 
 client:
   num_clients: 2
-  client_parallel: true
 
-server:
-  server_batching_mode: parallel_concat
 
 runtime:
   device: cuda_if_available

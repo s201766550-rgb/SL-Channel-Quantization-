@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: robust_5seed
 
@@ -13,5 +13,4 @@ client:
   num_clients: 5
 
 server:
-  server_batching_mode: parallel_concat
 

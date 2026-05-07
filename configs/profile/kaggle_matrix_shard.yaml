@@ -1,4 +1,4 @@
-﻿# @package _global_
+# @package _global_
 profile:
   name: kaggle_matrix_shard
 
@@ -13,7 +13,6 @@ method:
 
 client:
   num_clients: 5
-  client_parallel: true
 
 runtime:
   device: cuda_if_available
